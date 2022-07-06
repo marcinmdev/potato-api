@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+projectName=$(basename "$(pwd)")
+docker exec -w /var/www/"$projectName" -t "$projectName"-php bin/phpunit "$@"

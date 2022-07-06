@@ -1,0 +1,26 @@
+alias ll='LANG=C ls -lah --color --group-directories-first'
+alias sf='php bin/console'
+
+setopt HIST_FIND_NO_DUPS
+
+source /usr/share/fzf/key-bindings.zsh
+
+FZF_KEYBINDINGS_FILE=~/fzf/shell/key-bindings.zsh
+if [[ -f ${FZF_KEYBINDINGS_FILE} ]]; then
+    source ${FZF_KEYBINDINGS_FILE}
+    __fzf_history__() (
+      local line
+      shopt -u nocaseglob nocasematch
+      line=$(
+        HISTTIMEFORMAT= history | tac | sort --key=2.1 -bus | sort -n |
+        FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} $FZF_DEFAULT_OPTS --tac -n2..,.. --tiebreak=index --bind=ctrl-r:toggle-sort $FZF_CTRL_R_OPTS +m" $(__fzfcmd) |
+        command grep '^ *[0-9]') &&
+        if [[ $- =~ H ]]; then
+          sed 's/^ *\([0-9]*\)\** .*/!\1/' <<< "$line"
+        else
+          sed 's/^ *\([0-9]*\)\** *//' <<< "$line"
+        fi
+    )
+fi
+
+zstyle ':prompt:grml:left:setup' items time user at host path vcs percent

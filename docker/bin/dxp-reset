@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+projectName=$(basename "$(pwd)")
+
+if [ "$1" == "test" ]; then
+  docker exec -w /var/www/"$projectName" -e APP_ENV=test "$projectName"-php /var/www/"$projectName"/bin/console doctrine:schema:drop --force --full-database -n
+  docker exec -w /var/www/"$projectName" -e APP_ENV=test "$projectName"-php /var/www/"$projectName"/bin/console doctrine:migrations:migrate -n
+  docker exec -w /var/www/"$projectName" -e APP_ENV=test "$projectName"-php /var/www/"$projectName"/bin/console doctrine:fixtures:load --append -n
+  docker exec -w /var/www/"$projectName" -e APP_ENV=test "$projectName"-php /var/www/"$projectName"/bin/console cache:clear -n
+
+  echo "$projectName"' test db reset'
+else
+  docker exec -w /var/www/"$projectName" "$projectName"-php /var/www/"$projectName"/bin/console doctrine:schema:drop --force --full-database -n
+  docker exec -w /var/www/"$projectName" "$projectName"-php /var/www/"$projectName"/bin/console doctrine:migrations:migrate -n
+  docker exec -w /var/www/"$projectName" "$projectName"-php /var/www/"$projectName"/bin/console doctrine:fixtures:load --append -n
+  docker exec -w /var/www/"$projectName" "$projectName"-php /var/www/"$projectName"/bin/console cache:clear -n
+
+  echo "$projectName"' dev db reset'
+fi

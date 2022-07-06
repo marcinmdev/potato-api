@@ -1,0 +1,28 @@
+# syntax=docker/dockerfile:1
+FROM php:8.1-fpm-alpine
+
+ARG UID
+ARG GID
+ARG USER
+
+RUN apk add --update --no-cache $PHPIZE_DEPS \
+        git wget zsh zsh-vcs fzf fzf-zsh-plugin openssh-client-default \
+        libpq-dev icu-dev
+
+RUN deluser www-data
+RUN addgroup -g ${GID} -S ${USER}
+RUN adduser -u ${UID} -D -s /bin/zsh -G ${USER} ${USER}
+
+RUN docker-php-ext-install -j$(nproc) intl pdo_mysql pdo_pgsql sockets
+
+RUN pecl install xdebug apcu redis
+RUN docker-php-ext-enable xdebug
+RUN docker-php-ext-enable opcache
+RUN docker-php-ext-enable redis
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
+
+COPY ./php.ini /usr/local/etc/php/conf.d/custom-php.ini
+
+USER ${USER}
+WORKDIR /var/www
