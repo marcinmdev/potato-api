@@ -1,0 +1,2 @@
+GET https://potato-api.loc/v1/ingredient/?XDEBUG_SESSION_START=PHPSTORM
+X-AUTH-TOKEN: test

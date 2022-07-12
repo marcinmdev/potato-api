@@ -6,7 +6,7 @@ services:
         - "80:80"
         - "443:443"
     volumes:
-        - .:/var/www/potato
+        - .:/var/www/potato-api
         - ./docker/http/site.conf:/etc/nginx/conf.d/site.conf
         - ./docker/http/snippets:/etc/nginx/conf.d/snippets
         - ./docker/http/certs:/etc/ssl/certs
@@ -48,12 +48,6 @@ services:
     networks:
       static-network:
         ipv4_address: 172.1.128.3
-  node:
-    container_name: potato-api-node
-    image: node:current-alpine
-    volumes:
-      - .:/var/www/potato-api
-    user: ${UID}:${GID}
 networks:
   static-network:
     ipam:

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\IngredientRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: IngredientRepository::class)]
 class Ingredient
@@ -11,15 +12,19 @@ class Ingredient
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['index'])]
     private int $id;
 
     #[ORM\Column(type: 'text')]
+    #[Groups(['index'])]
     private string $name;
 
     #[ORM\Column(type: 'integer')]
+    #[Groups(['index'])]
     private int $price;
 
     #[ORM\Column(type: 'integer')]
+    #[Groups(['index'])]
     private int $weight;
 
     public function getId(): ?int
