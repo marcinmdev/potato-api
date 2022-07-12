@@ -34,8 +34,8 @@ cp ./docker/.zshrc.local to ./docker/data/home/${USER}/.zshrc.local
 docker exec -it potato-api-db /bin/bash
 su postgres
 psql -U potato-api
-CREATE DATABASE potato-api_test;
-GRANT ALL PRIVILEGES ON DATABASE potato-api_test to potato-api;
+CREATE DATABASE "potato-api_test";
+GRANT ALL PRIVILEGES ON DATABASE "potato-api_test" to "potato-api";
 ```
 
 #### WORKFLOW
