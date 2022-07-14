@@ -1,4 +1,7 @@
 🥔
+
+[![Potato-API Code Validator](https://github.com/marcinmdev/potato-api/actions/workflows/php.yml/badge.svg)](https://github.com/marcinmdev/potato-api/actions/workflows/php.yml)
+
 ## DESCRIPTION
 Example Symfony API project with tested and simple code.
 
