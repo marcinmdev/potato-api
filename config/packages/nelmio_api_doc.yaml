@@ -1,0 +1,17 @@
+nelmio_api_doc:
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/v
+    documentation:
+        info:
+            title: Potato-API 🥔
+            description: Yummy
+            version: 1.0.0
+        components:
+            securitySchemes:
+                ApiKeyAuth: # arbitrary name for the security scheme
+                    type: apiKey
+                    in: header
+                    name: X-AUTH-TOKEN
+        security:
+            -   ApiKeyAuth: []
