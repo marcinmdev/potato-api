@@ -29,13 +29,12 @@ use Zenstruck\Foundry\RepositoryProxy;
 final class UserAccountFactory extends ModelFactory
 {
     /**
-     * @return array{apiToken: string, roles: array{}}
+     * @return array{apiToken: string}
      */
     protected function getDefaults(): array
     {
         return [
             'apiToken' => self::faker()->text(),
-            'roles' => [],
         ];
     }
 
