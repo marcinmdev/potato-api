@@ -2,7 +2,6 @@
 
 namespace App\Tests\Controller;
 
-use App\Story\IngredientStory;
 use App\Story\UserAccountStory;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -24,7 +23,8 @@ class IngredientControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         try {
-            $responseContent = json_decode($client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            /** @var array{array{id: int, name: string, price: int, weight: int}} $responseContent */
+            $responseContent = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
             $this->assertNotEmpty($responseContent[0]['id']);
             $this->assertNotEmpty($responseContent[0]['name']);
             $this->assertNotEmpty($responseContent[0]['price']);
@@ -44,7 +44,8 @@ class IngredientControllerTest extends WebTestCase
         $client->request('GET', '/v1/ingredient/1');
 
         try {
-            $responseContent = json_decode($client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            /** @var array{id: int, name: string, price: int, weight: int} $responseContent */
+            $responseContent = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
             $this->assertNotEmpty($responseContent['id']);
             $this->assertNotEmpty($responseContent['name']);
             $this->assertNotEmpty($responseContent['price']);
@@ -74,12 +75,12 @@ class IngredientControllerTest extends WebTestCase
                 ], JSON_THROW_ON_ERROR)
             );
 
-            $responseContent = json_decode($client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            /** @var array{id: int, name: string, price: int, weight: int} $responseContent */
+            $responseContent = json_decode((string) $client->getResponse()->getContent(), true, 512, JSON_THROW_ON_ERROR);
             $this->assertNotEmpty($responseContent['id']);
             $this->assertNotEmpty($responseContent['name']);
             $this->assertNotEmpty($responseContent['price']);
             $this->assertNotEmpty($responseContent['weight']);
-
         } catch (Throwable $e) {
             $this->fail($e->getMessage());
         }
