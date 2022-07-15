@@ -12,19 +12,19 @@ class Ingredient
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['index'])]
+    #[Groups(['index', 'details'])]
     private int $id;
 
     #[ORM\Column(type: 'text')]
-    #[Groups(['index'])]
+    #[Groups(['index', 'details'])]
     private string $name;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['index'])]
+    #[Groups(['index', 'details'])]
     private int $price;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['index'])]
+    #[Groups(['index', 'details'])]
     private int $weight;
 
     public function getId(): ?int

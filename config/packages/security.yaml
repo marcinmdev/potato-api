@@ -1,7 +1,6 @@
 security:
     enable_authenticator_manager: true
     providers:
-        # used to reload user from session & other features (e.g. switch_user)
         user_provider:
             entity:
                 class: App\Entity\UserAccount

@@ -1,7 +1,8 @@
 nelmio_api_doc:
-    areas: # to filter documented areas
+    areas:
         path_patterns:
             - ^/v
+    models: { use_jms: false }
     documentation:
         info:
             title: Potato-API 🥔
