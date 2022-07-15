@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Throwable;
 
 #[Route('/ingredient')]
 class IngredientController extends AbstractController
@@ -25,7 +26,7 @@ class IngredientController extends AbstractController
             minItems: 2
         )
     )]
-    #[OA\Tag(name: 'ingredients')]
+    #[OA\Tag(name: 'ingredient')]
     #[Route('/', name: 'app_ingredient_index', methods: ['GET'])]
     public function index(IngredientRepository $ingredientRepository): JsonResponse
     {
@@ -40,6 +41,38 @@ class IngredientController extends AbstractController
         );
     }
 
+    #[OA\Response(
+        response: 200,
+        description: 'Returns ingredient',
+        content: new OA\JsonContent(ref: new Model(type: Ingredient::class, groups: ['details']))
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Not found',
+        content: new OA\JsonContent(type: 'object')
+    )]
+    #[OA\Tag(name: 'ingredient')]
+    #[Route('/{id}', name: 'app_ingredient_get', methods: ['GET'])]
+    public function get(IngredientRepository $ingredientRepository, int $id): JsonResponse
+    {
+        $ingredient = $ingredientRepository->find($id);
+
+        if ($ingredient) {
+            return $this->json(
+                data: $ingredient,
+                status: Response::HTTP_OK,
+                context: [
+                    'groups' => ['details'],
+                ]
+            );
+        }
+
+        return $this->json(
+            data: [],
+            status: Response::HTTP_NOT_FOUND,
+        );
+    }
+
     #[OA\RequestBody(required: true, content: new OA\JsonContent(ref: new Model(type: IngredientType::class)))]
     #[OA\Response(
         response: 200,
@@ -48,14 +81,27 @@ class IngredientController extends AbstractController
             ref: new Model(type: Ingredient::class, groups: ['details'])
         )
     )]
-    #[OA\Tag(name: 'ingredients')]
+    #[OA\Response(
+        response: 400,
+        description: 'Bad request',
+        content: new OA\JsonContent(type: 'object')
+    )]
+    #[OA\Tag(name: 'ingredient')]
     #[Route('/', name: 'app_ingredient_create', methods: ['POST'])]
     public function create(IngredientRepository $ingredientRepository, Request $request): JsonResponse
     {
         $ingredient = new Ingredient();
 
         $form = $this->createForm(IngredientType::class, $ingredient);
-        $form->handleRequest($request);
+
+        try {
+            $form->submit((array) json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR));
+        } catch (Throwable $e) {
+            return $this->json(
+                data: $e->getMessage(),
+                status: Response::HTTP_BAD_REQUEST,
+            );
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $ingredientRepository->add($ingredient);
@@ -72,6 +118,37 @@ class IngredientController extends AbstractController
         return $this->json(
             data: [],
             status: Response::HTTP_BAD_REQUEST,
+        );
+    }
+
+    #[OA\Response(
+        response: 204,
+        description: 'Deletes ingredient',
+        content: new OA\JsonContent(type: 'object')
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Not found',
+        content: new OA\JsonContent(type: 'object')
+    )]
+    #[OA\Tag(name: 'ingredient')]
+    #[Route('/{id}', name: 'app_ingredient_delete', methods: ['DELETE'])]
+    public function delete(IngredientRepository $ingredientRepository, int $id): JsonResponse
+    {
+        $ingredient = $ingredientRepository->find($id);
+
+        if ($ingredient) {
+            $ingredientRepository->remove($ingredient);
+
+            return $this->json(
+                data: [],
+                status: Response::HTTP_NO_CONTENT,
+            );
+        }
+
+        return $this->json(
+            data: [],
+            status: Response::HTTP_NOT_FOUND,
         );
     }
 }
