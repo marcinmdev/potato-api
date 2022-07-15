@@ -8,11 +8,11 @@ nelmio_api_doc:
             title: Potato-API 🥔
             description: Yummy
             version: 1.0.0
+        security:
+            -   ApiKeyAuth: [ ]
         components:
             securitySchemes:
-                ApiKeyAuth: # arbitrary name for the security scheme
+                ApiKeyAuth:
                     type: apiKey
                     in: header
                     name: X-AUTH-TOKEN
-        security:
-            -   ApiKeyAuth: []

@@ -21,7 +21,8 @@ class IngredientController extends AbstractController
         description: 'Returns all ingredients',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Ingredient::class, groups: ['index']))
+            items: new OA\Items(ref: new Model(type: Ingredient::class, groups: ['index'])),
+            minItems: 2
         )
     )]
     #[OA\Tag(name: 'ingredients')]
@@ -39,13 +40,12 @@ class IngredientController extends AbstractController
         );
     }
 
-    #[OA\RequestBody(required: true,content: new OA\JsonContent(ref: new Model(type: IngredientType::class)))]
+    #[OA\RequestBody(required: true, content: new OA\JsonContent(ref: new Model(type: IngredientType::class)))]
     #[OA\Response(
         response: 200,
         description: 'Creates an ingredient and returns it',
         content: new OA\JsonContent(
-            type: 'array',
-            items: new OA\Items(ref: new Model(type: Ingredient::class, groups: ['details']))
+            ref: new Model(type: Ingredient::class, groups: ['details'])
         )
     )]
     #[OA\Tag(name: 'ingredients')]
