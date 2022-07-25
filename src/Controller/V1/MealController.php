@@ -131,8 +131,6 @@ class MealController extends AbstractController
             );
         }
 
-        $delme = $form->getErrors(true, false);
-
         return $this->json(
             data: [],
             status: Response::HTTP_BAD_REQUEST,
