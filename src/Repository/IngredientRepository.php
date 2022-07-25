@@ -36,4 +36,17 @@ class IngredientRepository extends ServiceEntityRepository
             $this->_em->flush();
         }
     }
+
+    /**
+     * @param array{limit: int, offset: int} $filter
+     *
+     * @return Ingredient[]
+     */
+    public function filter(array $filter): array
+    {
+        return $this->createQueryBuilder('i')
+            ->setFirstResult($filter['offset'] ?? null)
+            ->getQuery()
+            ->getResult();
+    }
 }

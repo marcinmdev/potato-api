@@ -3,6 +3,7 @@
 namespace App\Controller\V1;
 
 use App\Entity\Ingredient;
+use App\Form\FilterType;
 use App\Form\IngredientType;
 use App\Repository\IngredientRepository;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -19,25 +20,40 @@ class IngredientController extends AbstractController
 {
     #[OA\Response(
         response: 200,
-        description: 'Returns all ingredients',
+        description: 'Returns ingredients',
         content: new OA\JsonContent(
             type: 'array',
             items: new OA\Items(ref: new Model(type: Ingredient::class, groups: ['index'])),
             minItems: 2
         )
     )]
+    #[OA\Parameter(name: 'limit', description: 'No higher than 20', in: 'query', schema: new OA\Schema(type: 'int'))]
+    #[OA\Parameter(name: 'offset', in: 'query', schema: new OA\Schema(type: 'int'))]
     #[OA\Tag(name: 'ingredient')]
     #[Route('/', name: 'app_ingredient_index', methods: ['GET'])]
-    public function index(IngredientRepository $ingredientRepository): JsonResponse
+    public function index(IngredientRepository $ingredientRepository, Request $request): JsonResponse
     {
-        $ingredients = $ingredientRepository->findAll();
+        $form = $this->createForm(FilterType::class);
+        $form->submit($request->query->all());
+
+        if ($form->isValid()) {
+            /** @var array{limit: int, offset: int} $filterData */
+            $filterData = (array) $form->getData();
+
+            $filteredIngredients = $ingredientRepository->filter($filterData);
+
+            return $this->json(
+                data: $filteredIngredients,
+                status: Response::HTTP_OK,
+                context: [
+                    'groups' => ['index'],
+                ]
+            );
+        }
 
         return $this->json(
-            data: $ingredients,
-            status: Response::HTTP_OK,
-            context: [
-                'groups' => ['index'],
-            ]
+            data: [],
+            status: Response::HTTP_BAD_REQUEST,
         );
     }
 

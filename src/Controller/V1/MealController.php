@@ -3,6 +3,7 @@
 namespace App\Controller\V1;
 
 use App\Entity\Meal;
+use App\Form\FilterType;
 use App\Form\MealType;
 use App\Repository\MealRepository;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -19,25 +20,40 @@ class MealController extends AbstractController
 {
     #[OA\Response(
         response: 200,
-        description: 'Returns all meals',
+        description: 'Returns meals',
         content: new OA\JsonContent(
             type: 'array',
             items: new OA\Items(ref: new Model(type: Meal::class, groups: ['index'])),
             minItems: 2
         )
     )]
+    #[OA\Parameter(name: 'limit', description: 'No higher than 20', in: 'query', schema: new OA\Schema(type: 'int'))]
+    #[OA\Parameter(name: 'offset', in: 'query', schema: new OA\Schema(type: 'int'))]
     #[OA\Tag(name: 'meal')]
     #[Route('/', name: 'app_meal_index', methods: ['GET'])]
-    public function index(MealRepository $mealRepository): JsonResponse
+    public function index(MealRepository $mealRepository, Request $request): JsonResponse
     {
-        $meals = $mealRepository->findAll();
+        $form = $this->createForm(FilterType::class);
+        $form->submit($request->query->all());
+
+        if ($form->isValid()) {
+            /** @var array{limit: int, offset: int} $filterData */
+            $filterData = (array) $form->getData();
+
+            $filteredMeals = $mealRepository->filter($filterData);
+
+            return $this->json(
+                data: $filteredMeals,
+                status: Response::HTTP_OK,
+                context: [
+                    'groups' => ['index'],
+                ]
+            );
+        }
 
         return $this->json(
-            data: $meals,
-            status: Response::HTTP_OK,
-            context: [
-                'groups' => ['index'],
-            ]
+            data: [],
+            status: Response::HTTP_BAD_REQUEST,
         );
     }
 
@@ -78,7 +94,7 @@ class MealController extends AbstractController
         response: 200,
         description: 'Creates a meal and returns it',
         content: new OA\JsonContent(
-            ref: new Model(type: Meal::class, groups: ['details'])
+            ref: new Model(type: MealType::class, groups: ['details'])
         )
     )]
     #[OA\Response(
