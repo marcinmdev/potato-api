@@ -5,6 +5,16 @@
 ## DESCRIPTION
 Example Symfony API project with tested and simple code.
 
+## CONSIDERATIONS
+* as few dependencies as possible (no FOSRestBundle/DoctrineExtensions in project of this scope)
+* simple auth
+* [PHPstan](https://phpstan.org/) lvl 9, with arrays typed as strictly as it needs to be
+* [PHP-CS-Fixer](https://cs.symfony.com/)
+* basic tests
+* Swagger OpenApi docs
+* Github Actions for tests n code validation
+* opinionated dev setup included, based on docker compose
+
 ## REQUIREMENTS
 ```shell
 #.zshrc/bashrc equivalent
@@ -57,4 +67,6 @@ dxp
 # use <ctr-r> and thanks to fzf we have access to very useful history browser
 # code check
 composer code-validator
+#xdebug in PhpStorm (with serverName properly set)
+XDEBUG_MODE=debug PHP_IDE_CONFIG="serverName=potato-api.loc" bin/phpunit --filter testIndex
 ```
