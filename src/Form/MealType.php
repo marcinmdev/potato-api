@@ -18,7 +18,7 @@ class MealType extends AbstractType
             ->add('name', TextType::class)
             ->add('ingredients', EntityType::class, [
                 'class' => Ingredient::class,
-                'choice_label' => 'name',
+                'choice_label' => 'id',
                 'multiple' => true,
             ]);
     }
